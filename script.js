@@ -1,18 +1,20 @@
 var animation = false;
 var camera;
 var Play;
+var scene;
+var renderer;
 window.onload = function init() {
-    var scene = new THREE.Scene();
+    scene = new THREE.Scene();
 
-    const loader = new THREE.TextureLoader();
-    const bgTexture = loader.load('resources/images/Screenshot_20190607-100410_PintFinder.jpg');
-    scene.background = bgTexture;
+    // const loader = new THREE.TextureLoader();
+    // const bgTexture = loader.load('images/horizon2.jpg');
+    // scene.background = bgTexture;
 
-    // scene.background = new THREE.Color( 0xa0a0a0 );
+    scene.background = new THREE.Color( 0xa0a0a0 );
 
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
-    var renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
     
@@ -21,6 +23,7 @@ window.onload = function init() {
     var material = new THREE.MeshBasicMaterial( { color: 0x43464B } );
     var cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
+    addcubbo();
 
     camera.position.z = 15;
     camera.position.x = 2;
@@ -51,7 +54,18 @@ window.onload = function init() {
     
 
 }
-
+function addcubbo(){
+    var geometry = new THREE.BoxGeometry( 70, 35, 0.1 );
+    
+    const loader = new THREE.TextureLoader();
+    const material = new THREE.MeshBasicMaterial({
+        map: loader.load('images/horizon2.jpg'),
+    });
+    var cube = new THREE.Mesh( geometry, material );
+    cube.position.x = 6;
+    cube.position.z = -6;
+    scene.add( cube );
+}
 
 
 var cameraspeed = 0.8;
