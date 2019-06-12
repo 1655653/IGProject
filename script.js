@@ -3,16 +3,31 @@ var camera;
 var Play;
 var scene;
 var renderer;
+var body;
+//parabolic vars
+var Vo = 20;
+var alpha = Math.PI/6;
+var Vox = Vo * Math.cos(alpha);
+var Voy = Vo * Math.sin(alpha);
+var g = 9.81;
+var t=0;
+var cube;
+//model vars
+var wingDx;
+var wingSx;
 window.onload = function init() {
     scene = new THREE.Scene();
 
-    // const loader = new THREE.TextureLoader();
-    // const bgTexture = loader.load('images/horizon2.jpg');
-    // scene.background = bgTexture;
+    var ambLight = new THREE.AmbientLight( 0x444444 );
+    scene.add( ambLight );
+    var light = new THREE.DirectionalLight( 0xddfddd, 1 );
+    light.position.set( -10, 10, 10 );
+    scene.add( light );
 
     scene.background = new THREE.Color( 0xa0a0a0 );
 
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+    camera.lookAt( scene.position );
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -21,81 +36,36 @@ window.onload = function init() {
 
     var geometry = new THREE.BoxGeometry( 1, 1.5, 1 );
     var material = new THREE.MeshBasicMaterial( { color: 0x43464B } );
-    var cube = new THREE.Mesh( geometry, material );
+    cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
-    addcubbo();
 
-    //*******************/
-    //********HEAD */
-    var materialpapp = new THREE.MeshBasicMaterial( { color: 0xffffff } );
-    var headradius = 0.4;
-    var geometryhead = new THREE.SphereGeometry( headradius, 32, 50 );
-    geometryhead.applyMatrix( new THREE.Matrix4().makeScale( 1.2, 1.0, 1.0 ) );
-    var head = new THREE.Mesh( geometryhead, materialpapp );
-    scene.add( head );
-    head.position.y = 1.2;
-    //*********BODY */
-    var bodyradius = headradius*1.2;
-    var geometryBody = new THREE.SphereGeometry( bodyradius, 32, 50 );
-    geometryBody.applyMatrix( new THREE.Matrix4().makeScale( 1.0, 2.0, 1.5 ) );
-    var body = new THREE.Mesh( geometryBody, materialpapp );
-    body.rotation.z = - Math.PI/20;
-    body.position.x = head.position.x - 0.1;
-    scene.add( body );
-    //*********BECCO */
-    var noseradius = 0.15;
-    var materialNose = new THREE.MeshBasicMaterial( { color: 0x000000 } );
-    var geometryNose = new THREE.SphereGeometry( noseradius, 32, 50 );
-    geometryNose.applyMatrix( new THREE.Matrix4().makeScale( 1.0, 2.0, 1.5 ) );
-    var nose = new THREE.Mesh( geometryNose, materialNose );
-    nose.position.x = head.position.x+0.5;
-    nose.position.y = head.position.y;
-    nose.rotation.z = Math.PI / 4;
-    scene.add(nose);
-    //*****PUNTA DEL BECCO*****
-    var geometryNoseEnd = new THREE.CylinderGeometry( 0.001, 0.15, 0.2, 3 );
-    var noseEnd = new THREE.Mesh( geometryNoseEnd, materialNose );
-    noseEnd.position.x = nose.position.x+0.15;
-    noseEnd.position.y = nose.position.y-0.23;
-    noseEnd.rotation.z = -Math.PI + Math.PI/10;
-    scene.add( noseEnd );
-    //**********
-
+    // addcubbo(); //sfondo mare
+    drawParrot();
     
-   
-    //*******************/
-
     camera.position.z = 5;
     camera.position.x = 0;
     document.onkeydown = checkKey;
+
     Hud();
     document.getElementById("data").innerHTML = "asseX: "+cube.position.x+"\n"+"asseY: "+ cube.position.y;
 
-    var Vo = 20;
-    var alpha = Math.PI/6;
-    var Vox = Vo * Math.cos(alpha);
-    var Voy = Vo * Math.sin(alpha);
-    var g = 9.81;
-    var t=0;
-    function animate() {
-        requestAnimationFrame( animate );
-        if(animation) {
-            t+=0.006;
-            cube.position.x = Vox * t; 
-            cube.position.y = Voy * t -0.5*g*t*t; 
-            document.getElementById("data").innerHTML = "asseX: "+ Number(cube.position.x).toFixed(3)+"\n"+"asseY: "+ Number(cube.position.y).toFixed(3);
-        }
-
-        renderer.render( scene, camera );
-        
-    }
     animate();
-
-    
-    
-
 }
-function addcubbo(){
+
+function animate() {
+    requestAnimationFrame( animate );
+    if(animation) {
+        t+=0.006;
+        cube.position.x = Vox * t; 
+        cube.position.y = Voy * t -0.5*g*t*t; 
+        document.getElementById("data").innerHTML = "asseX: "+ Number(cube.position.x).toFixed(3)+"\n"+"asseY: "+ Number(cube.position.y).toFixed(3);
+    }
+    // wingDx.rotation.x+=0.05;
+    renderer.render( scene, camera );
+    
+}
+
+function addcubbo(){ //sfondo mare
     var geometry = new THREE.BoxGeometry( 70, 35, 0.1 );
     
     const loader = new THREE.TextureLoader();
