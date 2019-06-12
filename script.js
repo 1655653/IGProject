@@ -28,16 +28,19 @@ window.onload = function init() {
     //*******************/
     //********HEAD */
     var materialpapp = new THREE.MeshBasicMaterial( { color: 0xffffff } );
-    var headradius = 0.5;
+    var headradius = 0.4;
     var geometryhead = new THREE.SphereGeometry( headradius, 32, 50 );
+    geometryhead.applyMatrix( new THREE.Matrix4().makeScale( 1.2, 1.0, 1.0 ) );
     var head = new THREE.Mesh( geometryhead, materialpapp );
     scene.add( head );
-
-    head.position.y = 1.3;
+    head.position.y = 1.2;
     //*********BODY */
-    var geometryBody = new THREE.SphereGeometry( headradius, 32, 50 );
+    var bodyradius = headradius*1.2;
+    var geometryBody = new THREE.SphereGeometry( bodyradius, 32, 50 );
     geometryBody.applyMatrix( new THREE.Matrix4().makeScale( 1.0, 2.0, 1.5 ) );
     var body = new THREE.Mesh( geometryBody, materialpapp );
+    body.rotation.z = - Math.PI/20;
+    body.position.x = head.position.x - 0.1;
     scene.add( body );
     //*********BECCO */
     var noseradius = 0.15;
@@ -50,10 +53,10 @@ window.onload = function init() {
     nose.rotation.z = Math.PI / 4;
     scene.add(nose);
     //*****PUNTA DEL BECCO*****
-    var geometry = new THREE.CylinderGeometry( 0.001, 0.15, 0.5, 3 );
-    var noseEnd = new THREE.Mesh( geometry, materialNose );
-    noseEnd.position.x = nose.position.x+0.17;
-    noseEnd.position.y = nose.position.y-0.3;
+    var geometryNoseEnd = new THREE.CylinderGeometry( 0.001, 0.15, 0.2, 3 );
+    var noseEnd = new THREE.Mesh( geometryNoseEnd, materialNose );
+    noseEnd.position.x = nose.position.x+0.15;
+    noseEnd.position.y = nose.position.y-0.23;
     noseEnd.rotation.z = -Math.PI + Math.PI/10;
     scene.add( noseEnd );
     //**********
