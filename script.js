@@ -5,16 +5,28 @@ var scene;
 var renderer;
 var body;
 //parabolic vars
-var Vo = 20;
-var alpha = Math.PI/6;
+var Vo = 50;
+var alpha = Math.PI/4;
 var Vox = Vo * Math.cos(alpha);
 var Voy = Vo * Math.sin(alpha);
 var g = 9.81;
 var t=0;
-var cube;
+var body;
 //model vars
 var wingDx;
+var pivot;
 var wingSx;
+var tail;
+
+var legDx;
+var FingDx2;
+var FingDx3;
+
+var legSx;
+var FingSx2;
+var FingSx3;
+
+var noseEnd;
 window.onload = function init() {
     scene = new THREE.Scene();
 
@@ -34,20 +46,16 @@ window.onload = function init() {
     document.body.appendChild( renderer.domElement );
     
 
-    var geometry = new THREE.BoxGeometry( 1, 1.5, 1 );
-    var material = new THREE.MeshBasicMaterial( { color: 0x43464B } );
-    cube = new THREE.Mesh( geometry, material );
-    scene.add( cube );
-
     // addcubbo(); //sfondo mare
     drawParrot();
-    
+    body.rotation.z = -alpha;
     camera.position.z = 5;
     camera.position.x = 0;
+    
     document.onkeydown = checkKey;
 
     Hud();
-    document.getElementById("data").innerHTML = "asseX: "+cube.position.x+"\n"+"asseY: "+ cube.position.y;
+    document.getElementById("data").innerHTML = "asseX: "+body.position.x+"\n"+"asseY: "+ body.position.y;
 
     animate();
 }
@@ -55,12 +63,13 @@ window.onload = function init() {
 function animate() {
     requestAnimationFrame( animate );
     if(animation) {
-        t+=0.006;
-        cube.position.x = Vox * t; 
-        cube.position.y = Voy * t -0.5*g*t*t; 
-        document.getElementById("data").innerHTML = "asseX: "+ Number(cube.position.x).toFixed(3)+"\n"+"asseY: "+ Number(cube.position.y).toFixed(3);
+        t+=0.01;
+        body.position.x = Vox * t; 
+        body.position.y = Voy * t -0.5*g*t*t; 
+        document.getElementById("data").innerHTML = "asseX: "+ Number(body.position.x).toFixed(3)+"\n"+"asseY: "+ Number(body.position.y).toFixed(3);
+        if (body.position.y < 0 ) t = 0;
     }
-    // wingDx.rotation.x+=0.05;
+    
     renderer.render( scene, camera );
     
 }
@@ -72,10 +81,10 @@ function addcubbo(){ //sfondo mare
     const material = new THREE.MeshBasicMaterial({
         map: loader.load('images/horizon2.jpg'),
     });
-    var cube = new THREE.Mesh( geometry, material );
-    cube.position.x = 6;
-    cube.position.z = -6;
-    scene.add( cube );
+    var body = new THREE.Mesh( geometry, material );
+    body.position.x = 6;
+    body.position.z = -6;
+    scene.add( body );
 }
 
 
