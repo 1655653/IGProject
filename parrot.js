@@ -12,12 +12,19 @@ function drawParrot(){
     body.position.x = - 0.1;
 
     //********HEAD */
+    Textmask = new THREE.TextureLoader().load('images/mask.PNG');
+    // Textmask.offset.x = -0.29; // 0.0 - 1.0
+    Textmask.offset.y = 0.11; 
+    Textmask.offset.x = 0.01; 
+    var materialHeadpapp = new THREE.MeshPhongMaterial( { color: 0xff0000, map: Textmask ,transparent : true});
     var geometryhead = new THREE.SphereGeometry( radius, 10, 10 );
     geometryhead.applyMatrix( new THREE.Matrix4().makeScale( 1.2, 1.0, 1.0 ) );
-    var head = new THREE.Mesh( geometryhead, materialpapp );
+    var head = new THREE.Mesh( geometryhead, materialHeadpapp );
+    var head2 = new THREE.Mesh( geometryhead, materialpapp );
 
     head.position.y = 1.2;
     body.add( head );
+    head.add( head2 );
     
     // console.log(body.children[0].position.y);
 

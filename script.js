@@ -26,7 +26,8 @@ var legSx;
 var FingSx2;
 var FingSx3;
 
-var noseEnd;
+var Textmask;
+var Textmask2;
 window.onload = function init() {
     scene = new THREE.Scene();
 
@@ -68,8 +69,10 @@ function animate() {
         body.position.y = Voy * t -0.5*g*t*t; 
         document.getElementById("data").innerHTML = "asseX: "+ Number(body.position.x).toFixed(3)+"\n"+"asseY: "+ Number(body.position.y).toFixed(3);
         if (body.position.y < 0 ) t = 0;
+        
     }
-    
+    // body.rotation.y+=0.009;
+    // Textmask.offset.y += 0.001;
     renderer.render( scene, camera );
     
 }
@@ -93,19 +96,25 @@ function checkKey(e) {
     e = e || window.event;
     if (e.keyCode == '38') {
         //up arrow
-        camera.position.y+=cameraspeed;
+        // camera.position.y+=cameraspeed;
+        body.rotation.y+=cameraspeed;
     }
     else if (e.keyCode == '40') {
         // down arrow
-        camera.position.y-=cameraspeed;
+        // camera.position.y-=cameraspeed;
+        body.rotation.y-=cameraspeed;
     }
     else if (e.keyCode == '37') {
        // left arrow
-       camera.position.x-=cameraspeed;
+       Textmask.offset.x += 0.01;
+       console.log(Textmask.offset.x);
+    //    camera.position.x-=cameraspeed;
     }
     else if (e.keyCode == '39') {
         //right arrow
-       camera.position.x+=cameraspeed;
+        Textmask.offset.x -= 0.01;
+        console.log(Textmask.offset.x);
+    //    camera.position.x+=cameraspeed;
     }
 }
 
