@@ -30,9 +30,9 @@ function drawCannon(){
     cannon = new THREE.Mesh(cannongeom, cannonmaterial);
     cannon.position.y = -4;
     cannon.rotation.z = -Math.PI/4;
-    // scene.add(wheel);
-    // scene.add(wheeldx);
-    // scene.add(cannon);
+    scene.add(wheel);
+    scene.add(wheeldx);
+    scene.add(cannon);
 
     
 }

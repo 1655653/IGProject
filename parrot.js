@@ -17,7 +17,7 @@ function drawParrot(){
     var materialHeadpapp = new THREE.MeshPhongMaterial( { color: 0xffffff, map: Textmask ,transparent : true});
     var geometryhead = new THREE.SphereGeometry( radius, 10, 10 );
     geometryhead.applyMatrix( new THREE.Matrix4().makeScale( 1.2, 1.0, 1.0 ) );
-    var head = new THREE.Mesh( geometryhead, materialHeadpapp );
+    head = new THREE.Mesh( geometryhead, materialHeadpapp );
     var head2 = new THREE.Mesh( geometryhead, new THREE.MeshPhongMaterial( { color: 0xff0000} ));
 
     head.position.y = 1.2;
@@ -210,7 +210,13 @@ function drawParrot(){
 
     //**********
     parrot.rotation.z = - Math.PI/4;
-    parrot.position.y = Y0;
-    parrot.position.x = X0;
+    parrot.position.y = -5*Y0;
+    parrot.position.x = -5*X0 + 0.02;
+    parrot.position.z = -0.3;
     scene.add( parrot );
+
+
+
+
+
 }
