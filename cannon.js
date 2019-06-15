@@ -23,16 +23,16 @@ function drawCannon(){
     wheel.position.y = -2.5;
     // wheel.rotation.z-=0.009; //ruoti e ti muovi
     // wheel.position.x+=0.009;
-    var wheelsx = wheel.clone();
-    wheelsx.position.z = 2.5;
+    wheeldx = wheel.clone();
+    wheeldx.position.z = 2.5;
     var cannongeom = new THREE.CylinderGeometry(1.5, 1.9, 7, 8, 1,false );
     cannongeom.translate( -2.5, 2.5, 0 );
     cannon = new THREE.Mesh(cannongeom, cannonmaterial);
     cannon.position.y = -4;
     cannon.rotation.z = -Math.PI/4;
-    scene.add(wheel);
-    scene.add(wheelsx);
-    scene.add(cannon);
+    // scene.add(wheel);
+    // scene.add(wheeldx);
+    // scene.add(cannon);
 
     
 }

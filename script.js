@@ -31,7 +31,9 @@ var Textwing;
 var Textwingdx;
 
 var wheel;
+var wheeldx
 var cannon;
+
 window.onload = function init() {
     scene = new THREE.Scene();
 
@@ -54,7 +56,7 @@ window.onload = function init() {
     // addcubbo(); //sfondo mare
     drawParrot();
     drawCannon();
-    camera.position.z = 15;
+    camera.position.z = 5;
     camera.position.x = 0;
     
     document.onkeydown = checkKey;
@@ -73,15 +75,21 @@ function animate() {
     parrot.position.y=Y0;   
     if(cannon.rotation.z>-Math.PI/4) Y0 = 1.7;
     if(animation) {
+        var cannonWeight=30;
         t+=0.01;
         var Vox = Vo * Math.cos(alpha);
         var Voy = Vo * Math.sin(alpha); 
         parrot.position.x = Vox * t + X0; 
         parrot.position.y = Voy * t -0.5*g*t*t + Y0; 
         document.getElementById("data").innerHTML = "asseX: "+ Number(parrot.position.x).toFixed(3)+"\n"+"asseY: "+ Number(parrot.position.y).toFixed(3);
+        if(cannon.position.x > -Vox/cannonWeight && Vox>0) {
+            cannon.position.x-=0.009;
+            wheel.rotation.z+=0.009;
+            wheel.position.x-=0.009;     
+            wheeldx.rotation.z+=0.009;
+            wheeldx.position.x-=0.009; 
+        }    
     }
-    // wheel.rotation.z-=0.009;
-    // wheel.position.x+=0.009;
     renderer.render( scene, camera );
     
 }
@@ -132,6 +140,7 @@ function checkKey(e) {
     }
     else if (e.keyCode == '32') { //spacebar
         animation = !animation;
+
     }
 }
 
