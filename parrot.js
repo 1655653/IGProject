@@ -213,10 +213,6 @@ function drawParrot(){
     parrot.position.y = -5*Y0;
     parrot.position.x = -5*X0 + 0.02;
     parrot.position.z = -0.3;
-    scene.add( parrot );
-
-
-
-
+    return parrot;
 
 }

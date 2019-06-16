@@ -38,6 +38,9 @@ var delta = 0.1;
 var rage = 1;
 var standby = false;
 var step = 1;
+
+var positioning = true;
+var pointing = true;
           
         
 window.onload = function init() {
@@ -58,56 +61,36 @@ window.onload = function init() {
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
     
-    var imagePrefix = "skybox/";
-    var directions  = ["posx","negx","posy", "negy", "posz", "negz"];
-    var imageSuffix = ".JPG";
-    
-    var materialArray = [];
-    var times = 3;
-    for (var i = 0; i < 6; i++){
-        var t = new THREE.TextureLoader().load( imagePrefix + directions[i] + imageSuffix );
-        if(i==0 || i == 2 || i ==3){
-            t.wrapS = THREE.RepeatWrapping;
-            t.wrapT = THREE.RepeatWrapping;
-            t.repeat.set( times, 1 );
-        }
-        materialArray.push( new THREE.MeshBasicMaterial({
-            map: t,
-            side: THREE.DoubleSide,
-            transparent : true
-        }));
-    }
-    var skyGeometry = new THREE.CubeGeometry( 500, 500, 500*times );
-    var skyBox = new THREE.Mesh( skyGeometry, materialArray );
-    skyBox.rotation.y = Math.PI/2 ;
-    // skyBox.position.x = skyGeometry.parameters.depth/3;
-    console.log(skyGeometry.parameters.depth);
-    scene.add( skyBox );
-
-    
-
-
-    
-    // addcubbo(); //sfondo mare
-    drawParrot();
+    addcubeMap(); //sfondo mare
+    parrot = drawParrot();
+    scene.add(parrot);
     drawCannon();
     camera.position.z = 25;
-    // camera.position.x = parrot.position.x;
-    // camera.position.y = parrot.position.y;
+    
     
     document.onkeydown = checkKey;
 
     Hud();
-    document.getElementById("data").innerHTML = "asseX: "+ (parrot.position.x - Math.abs(X0))+"\n"+"asseY: "+ (parrot.position.y - Math.abs(Y0));
+    document.getElementById("data").innerHTML = "asseX: 0.0"+"\n"+"asseY: 0.0";
     animate();
-}
 
+}
 function animate() {
     requestAnimationFrame( animate );
-    parrot.rotation.z = cannon.rotation.z;
-    if(parrot.position.x<X0) parrot.position.x+=delta;   
-    if(parrot.position.x<Y0) parrot.position.y+=delta;    
-    if(cannon.rotation.z>-Math.PI/4) Y0 = 1.7;
+    if(standby) losetime();
+    if(positioning){
+        if(parrot.position.x<X0) parrot.position.x+=delta;  //animazione iniziale per arrivare al cannone  
+        if(parrot.position.x<Y0) parrot.position.y+=delta;
+        else {
+            positioning = false;
+        }
+    }
+    if(!positioning && pointing) {
+        cannon.add(parrot);
+        parrot.position.x = -2.51;
+        parrot.position.y = 5.5;
+        parrot.rotation.z = 0.07;
+    }
     if(animation) {
         var cannonWeight=30;
         t+=0.01;
@@ -115,45 +98,20 @@ function animate() {
         var Voy = Vo * Math.sin(alpha); 
         parrot.position.x = Vox * t + X0; 
         parrot.position.y = Voy * t -0.5*g*t*t + Y0; 
-        document.getElementById("data").innerHTML = "asseX: "+ Number(parrot.position.x).toFixed(3)+"\n"+"asseY: "+ Number(parrot.position.y).toFixed(3);
+        document.getElementById("data").innerHTML = "asseX: "+ Number(parrot.position.x).toFixed(1)+"\n"+"asseY: "+ Number(parrot.position.y).toFixed(1);
         if(cannon.position.x > -Vox/cannonWeight && Vox>0) {
             cannon.position.x-=0.009;
             wheel.rotation.z+=0.009;
             wheel.position.x-=0.009;     
             wheeldx.rotation.z+=0.009;
             wheeldx.position.x-=0.009; 
-        }    
+        }
+            
     }
-
-    if(standby) losetime();
-    camera.position.x = parrot.position.x;
-    camera.position.y = parrot.position.y;
-    
-    
-   
-
-    
-    
-
-
     renderer.render( scene, camera );
-    
-    
-    
 }
 
-function addcubbo(){ //sfondo mare
-    var geometry = new THREE.BoxGeometry( 70, 35, 0.1 );
-    
-    const loader = new THREE.TextureLoader();
-    const material = new THREE.MeshBasicMaterial({
-        map: loader.load('images/horizon2.jpg'),
-    });
-    var cubo = new THREE.Mesh( geometry, material );
-    cubo.position.x = 6;
-    cubo.position.z = -6;
-    scene.add( cubo );
-}
+
 
 
 var cameraspeed = 0.8;
@@ -161,31 +119,32 @@ function checkKey(e) {
     var span = 0.3;
     e = e || window.event;
     if (e.keyCode == '38') {//up arrow
-        if(cannon.rotation.z<0){
+        if(!positioning && cannon.rotation.z<0){
             alpha+=0.1;
             cannon.rotation.z+=0.1;
             cannon.position.x+=0.1;
-            X0-=span;
-            Y0+=span;
+            var v = new THREE.Vector3( 0,0,0);
+            X0 = cannon.children[0].getWorldPosition(v).x;
+            Y0 = cannon.children[0].getWorldPosition(v).y;
         }
-        if(cannon.rotation.z>-Math.PI/4) Y0 = 1.7;
-
-        
     }
     
     else if (e.keyCode == '40') {// down arrow
-        if(cannon.rotation.z > -Math.PI/2 ){
+        if(!positioning && cannon.rotation.z > -Math.PI/2 + 0.1){
             alpha-=0.1;
             cannon.rotation.z-=0.1;
             cannon.position.x-=0.1;
-            X0+=span;
-            Y0-=span;
+            var v = new THREE.Vector3( 0,0,0);
+            X0 = cannon.children[0].getWorldPosition(v).x;
+            Y0 = cannon.children[0].getWorldPosition(v).y;
         }
     }
     else if (e.keyCode == '37') {// left arrow
-        head.rotation.y += 0.009;
-        console.log(head.rotation.y);
-        rage*=2;
+        // console.log(cannon);
+        cannon.remove(cannon.children[0]);
+        scene.add(parrot);
+        pointing = false;
+        console.log(cannon.children.length);
     }
     else if (e.keyCode == '39') {//right arrow
         head.rotation.y -= 0.009;
@@ -204,7 +163,19 @@ function checkKey(e) {
         console.log(head.rotation.z);
     }
     else if (e.keyCode == '32') { //spacebar
+        if(!animation){
+            pointing = false;
+            cannon.remove(cannon.children[0]);
+            scene.remove( parrot );
+            parrot = drawParrot();
+            scene.add(parrot);
+            parrot.position.x = X0;
+            parrot.position.y = Y0;
+            camera.position.x = parrot.position.x;
+            camera.position.y = parrot.position.y;  
+        }
         animation = !animation;
+
     }
 }
 
@@ -284,6 +255,31 @@ function fTexBox(){
     document.body.appendChild(TextBox);
 }
 
+function addcubeMap(){ //sfondo mare
+    var imagePrefix = "skybox/";
+    var directions  = ["posx","negx","posy", "negy", "posz", "negz"];
+    var imageSuffix = ".JPG";
+    
+    var materialArray = [];
+    var times = 3;
+    for (var i = 0; i < 6; i++){
+        var t = new THREE.TextureLoader().load( imagePrefix + directions[i] + imageSuffix );
+        if(i==0 || i == 2 || i ==3){
+            t.wrapS = THREE.RepeatWrapping;
+            t.wrapT = THREE.RepeatWrapping;
+            t.repeat.set( times, 1 );
+        }
+        materialArray.push( new THREE.MeshBasicMaterial({
+            map: t,
+            side: THREE.DoubleSide,
+            transparent : true
+        }));
+    }
+    var skyGeometry = new THREE.CubeGeometry( 500, 500, 500*times );
+    var skyBox = new THREE.Mesh( skyGeometry, materialArray );
+    skyBox.rotation.y = Math.PI/2 ;
+    scene.add( skyBox );
+}
 
 //      up? delta = -0.009: delta = 0.009;
 //     wingDx.rotation.x+=delta*rage;
