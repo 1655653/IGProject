@@ -46,7 +46,7 @@ window.onload = function init() {
     var ambLight = new THREE.AmbientLight( 0x444444 );
     scene.add( ambLight );
     var light = new THREE.DirectionalLight( 0xddfddd, 1 );
-    light.position.set( -10, 10, 10 );
+    light.position.set( 0, 10, 70 );
     scene.add( light );
 
     scene.background = new THREE.Color( 0xa0a0a0 );
@@ -58,7 +58,36 @@ window.onload = function init() {
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
     
+    var imagePrefix = "skybox/";
+    var directions  = ["posx","negx","posy", "negy", "posz", "negz"];
+    var imageSuffix = ".JPG";
+    
+    var materialArray = [];
+    var times = 3;
+    for (var i = 0; i < 6; i++){
+        var t = new THREE.TextureLoader().load( imagePrefix + directions[i] + imageSuffix );
+        if(i==0 || i == 2 || i ==3){
+            t.wrapS = THREE.RepeatWrapping;
+            t.wrapT = THREE.RepeatWrapping;
+            t.repeat.set( times, 1 );
+        }
+        materialArray.push( new THREE.MeshBasicMaterial({
+            map: t,
+            side: THREE.DoubleSide,
+            transparent : true
+        }));
+    }
+    var skyGeometry = new THREE.CubeGeometry( 500, 500, 500*times );
+    var skyBox = new THREE.Mesh( skyGeometry, materialArray );
+    skyBox.rotation.y = Math.PI/2 ;
+    // skyBox.position.x = skyGeometry.parameters.depth/3;
+    console.log(skyGeometry.parameters.depth);
+    scene.add( skyBox );
 
+    
+
+
+    
     // addcubbo(); //sfondo mare
     drawParrot();
     drawCannon();
@@ -97,7 +126,8 @@ function animate() {
     }
 
     if(standby) losetime();
-    
+    camera.position.x = parrot.position.x;
+    camera.position.y = parrot.position.y;
     
     
    
@@ -128,7 +158,7 @@ function addcubbo(){ //sfondo mare
 
 var cameraspeed = 0.8;
 function checkKey(e) {
-    var span = 0.4;
+    var span = 0.3;
     e = e || window.event;
     if (e.keyCode == '38') {//up arrow
         if(cannon.rotation.z<0){
