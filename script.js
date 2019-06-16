@@ -171,8 +171,6 @@ function checkKey(e) {
             scene.add(parrot);
             parrot.position.x = X0;
             parrot.position.y = Y0;
-            camera.position.x = parrot.position.x;
-            camera.position.y = parrot.position.y;  
         }
         animation = !animation;
 
